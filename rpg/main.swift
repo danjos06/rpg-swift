@@ -8,7 +8,7 @@
 import Foundation
 var hpJogador = 50
 var hpMax = 50
-var defJogador = 12
+var defJogador = 7
 var lvl = 1
 var lvlInimigo = 0
 var xp = 0
@@ -16,6 +16,15 @@ var xpGanho = 0
 var moedas = 20
 var moedasGanhas = 0
 var nomeInimigo = ""
+var curaQtd = 1
+
+let itens = [
+    "Cura": [
+        "quantidade": 1,
+        "preco": 30
+    ],
+]
+
 print("=== Bem-vindo(a) à 2135 🔮 ===")
 print("Batalhe contra linguagens de programação, suba de nível e adquira itens para fortalecer sua jornada!")
 var firstTime = true
@@ -74,11 +83,25 @@ while true {
     }
     switch opc{
     case 1:
-        let results = batalha(hpJogador: hpJogador, hpMax: hpMax defJogador: defJogador, hpInimigo: 100, defInimigo: 8, nomeInimigo: nomeInimigo, moedasGanhas: moedasGanhas, xp: xpGanho)
+        let results = batalha(hpJogador: hpJogador, hpMax: hpMax, defJogador: defJogador, hpInimigo: hpMax*2, defInimigo: 4, nomeInimigo: nomeInimigo, moedasGanhas: moedasGanhas, xp: xpGanho, qtdCura: curaQtd)
         xp += results.xp
         moedas += results.moedasGanhas
+        curaQtd += results.qtdCura
     case 2:
-        print("Loja")
+        print("=== Loja ===")
+        for (i, j) in itens{
+            print("\(i) | Preço: \(j["preco"] ?? 0) moedas")
+        }
+        
+        print("Digite o item que deseja comprar: ")
+        let buy = readLine()
+        
+        if buy == "Cura" && moedas >= 30{
+            curaQtd += 1
+            print("Compra concluída! Agora você possui \(curaQtd) cura")
+        } else {
+            print("Erro na compra.")
+        }
     case 3:
         print("Saindo do programa...")
         exit(0)
@@ -87,7 +110,7 @@ while true {
     }
 }
 
-func batalha(hpJogador: Int, hpMax: Int, defJogador: Int, hpInimigo: Int, defInimigo: Int, nomeInimigo: String, moedasGanhas: Int, xp: Int) -> (hpJogador: Int, moedasGanhas: Int, xp: Int){
+func batalha(hpJogador: Int, hpMax: Int, defJogador: Int, hpInimigo: Int, defInimigo: Int, nomeInimigo: String, moedasGanhas: Int, xp: Int, qtdCura: Int) -> (hpJogador: Int, moedasGanhas: Int, xp: Int, qtdCura: Int){
     var hpJogador = hpJogador
     var hpInimigo = hpInimigo
     let moedasGanhas = moedasGanhas
@@ -95,7 +118,7 @@ func batalha(hpJogador: Int, hpMax: Int, defJogador: Int, hpInimigo: Int, defIni
     var danoRecebido = 0
     var atk = 0
     var dmg = 0
-    var qtdCura = 3
+    var qtdCura = qtdCura
     
     print("=== 💥 Início da Batalha 💥 ===")
     print("Você enfrentará \(nomeInimigo)")
@@ -103,6 +126,7 @@ func batalha(hpJogador: Int, hpMax: Int, defJogador: Int, hpInimigo: Int, defIni
     while hpJogador > 0 && hpInimigo > 0 {
         print("=== 🫵 Seu turno 🫵 ===")
         print("❤️ Pontos de vida: \(hpJogador)")
+        print("⚔️ Pontos de vida inimigo: \(hpInimigo)")
         print("1 - ⚔️ Atacar")
         print("2 - 🧪 Curar (\(qtdCura) restantes)")
         print("3 - ⏳ Aguardar")
@@ -170,7 +194,6 @@ func batalha(hpJogador: Int, hpMax: Int, defJogador: Int, hpInimigo: Int, defIni
                 print("\(nomeInimigo) errou o ataque!")
             }
         }
-        hpInimigo = 0
     }
     
     if hpJogador <= 0 {
@@ -182,7 +205,7 @@ func batalha(hpJogador: Int, hpMax: Int, defJogador: Int, hpInimigo: Int, defIni
         print("+\(moedasGanhas) moedas")
     }
     
-    return(hpJogador: hpJogador, moedasGanhas: moedasGanhas, xp:xp)
+    return(hpJogador: hpJogador, moedasGanhas: moedasGanhas, xp:xp, qtdCura:qtdCura)
 }
 
 func dado(d: Int) -> Int {
